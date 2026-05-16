@@ -1348,6 +1348,8 @@ class E2ELoss:
         self.o2m_copy = self.o2m
         # final gain (末期权重: one2many=0.1)
         self.final_o2m = 0.1
+        # [YOLO26 Fix] 总batch数(含所有epoch), 从trainer设置; 否则fallback到epochs(向后兼容, 但需要steps_per_epoch)
+        self.total_batches = getattr(model, 'total_batches', None)
 
     def __call__(self, preds: Any, batch: dict[str, torch.Tensor]) -> tuple[torch.Tensor, torch.Tensor]:
         """Calculate the sum of the loss for box, cls and dfl multiplied by batch size."""
@@ -1366,9 +1368,11 @@ class E2ELoss:
     def decay(self, x) -> float:
         """Calculate the decayed weight for one-to-many loss based on the current update step.
 
-        Linear decay from initial o2m (0.8) to final_o2m (0.1) over the training epochs.
+        Linear decay from initial o2m (0.8) to final_o2m (0.1) over the full training.
         """
-        return max(1 - x / max(self.one2one.hyp.epochs - 1, 1), 0) * (self.o2m_copy - self.final_o2m) + self.final_o2m
+        # [YOLO26 Fix] 使用总batch数(优先)或epochs(fallback)作为分母, 使o2m衰减跨越整个训练过程
+        total = self.total_batches if self.total_batches else self.one2one.hyp.epochs
+        return max(1 - x / max(total - 1, 1), 0) * (self.o2m_copy - self.final_o2m) + self.final_o2m
 
 
 # [YOLO26] 保留 E2EDetectLoss 作为兼容别名 (旧YOLOv10 checkpoint的pickle反序列化需要)

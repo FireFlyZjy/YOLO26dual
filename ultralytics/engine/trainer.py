@@ -327,6 +327,7 @@ class BaseTrainer:
         self._setup_train(world_size)
 
         nb = len(self.train_loader)  # number of batches
+        unwrap_model(self.model).total_batches = nb * self.epochs  # [YOLO26 Fix] ProgLoss总batch数(每GPU独立)
         nw = max(round(self.args.warmup_epochs * nb), 100) if self.args.warmup_epochs > 0 else -1  # warmup iterations
         last_opt_step = -1
         self.epoch_time = None
