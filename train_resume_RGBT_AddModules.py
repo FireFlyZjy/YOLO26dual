@@ -21,7 +21,7 @@ DEFAULT_PRETRAINED = "weights/yolo26s.pt"
 DEFAULT_DATA = "ultralytics/cfg/datasets/flir.yaml"
 
 # --- 训练参数 ---
-DEFAULT_EPOCHS = 100                                     # 训练轮数
+DEFAULT_EPOCHS = 100                                     # 续训目标总轮数（resume=True 时自动从 checkpoint 恢复的epoch继续训练到该值）
 DEFAULT_BATCH = 4                                        # 批次大小
 DEFAULT_IMGSZ = 640                                      # 输入图像尺寸
 DEFAULT_WORKERS = 0                                      # 数据加载线程数
@@ -52,14 +52,14 @@ DEFAULT_PROJECT = "runs/FLIR/26dual"
 DEFAULT_NAME = "yolo26s-RGBT-midfusion-Att_CBAM"
 
 # --- 恢复训练 ---
-DEFAULT_RESUME = ""                                      # last.pt 路径，留空则不启用续训
+DEFAULT_RESUME = "runs/FLIR/26dual/yolo26s-RGBT-midfusion-Att_CBAM_noE2E2/weights/last.pt"  # 续训 checkpoint 路径，留空则从头训练
 
 # --- 验证参数 (训练后自动验证) ---
 # 验证时使用训练后的 best.pt
 
 # --- CSV 输出 ---
-DEFAULT_CSV_DIR = r"C:\Users\Patrick\Desktop\exp_results"
-DEFAULT_CSV_NAME = "train_results.csv"
+DEFAULT_CSV_DIR = r"runs/FLIR/26dual"
+DEFAULT_CSV_NAME = "FLIR_rain_results.csv"
 
 # ============================================================================
 
